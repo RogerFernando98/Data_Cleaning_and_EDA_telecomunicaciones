@@ -1,77 +1,116 @@
-# 01_data_cleaning_and_eda
+#  Limpieza y Análisis de Datos - Telco Customer Churn
 
-## Sobre el conjunto de datos
+##  Objetivo
+El objetivo principal de este proyecto es **practicar los fundamentos de Python y Pandas aplicados a la limpieza y exploración de datos (EDA)**. Y probablemente el siguiente reto u objetivo sea predecir qué clientes se van a ir de la compañia en los próximos trimestres.
 
-**Contexto**
-Una compañía ficticia de telecomunicaciones que ofrecía servicios de telefonía fija e Internet a 7043 clientes en California en el tercer trimestre.
+---
 
-**Descripción de los datos**
-7043 observaciones con 33 variables
+##  Contexto
+Este proyecto utiliza un dataset ficticio de una compañía de telecomunicaciones que ofrece servicios de telefonía fija e internet a 7.043 clientes en EEUU. 
+La fuga de clientes es un reto común en la industria de las telecomunicaciones.
 
-* **CustomerID**: Un ID único que identifica a cada cliente.
+---
 
-* **Count**: Un valor usado en reportes/dashboards para sumar el número de clientes en un conjunto filtrado.
+##  Datos
+El conjunto de datos contiene información sobre:
 
-* **Country**: País de residencia principal del cliente.
+- **Demografía** → género, edad aproximada, dependientes, etc.  
+- **Localización** → ciudad, código postal, latitud/longitud.  
+- **Servicios contratados** → internet, telefonía, seguridad online, streaming, soporte técnico, etc.  
+- **Condiciones contractuales** → tipo de contrato, facturación electrónica, método de pago.  
+- **Tipos de cargos** → cargo mensual, cargos totales, CLTV (*Customer Lifetime Value*).  
+- **Churn(abandono y motivo)** → indicador de baja (0/1), score de churn y motivo de cancelación (si aplica).  
 
-* **State**: Estado de residencia principal del cliente.
+---
 
-* **City**: Ciudad de residencia principal del cliente.
+##  Estructura del Repositorio
+```bash
+01_DATA_CLEANING_AND_EDA/
+│── Data/
+│   ├── raw/                # Datos originales
+│   │   └── Telco_customer_churn.xlsx
+│   └── processed/          # Datos limpios
+│       └── cleaned_data.csv
+│
+│── src/                    # Código fuente (scripts y notebooks)
+│   └── primera_aproximacion.ipynb
+│
+│── requirements.txt        # Dependencias del proyecto
+│── README.md               # Este documento
+│── LICENSE                 # Licencia
+```
 
-* **Zip Code**: Código postal de residencia principal del cliente.
+---
 
-* **Lat Long**: Latitud y longitud combinadas de la residencia principal del cliente.
+##  Librerías y entorno
 
-* **Latitude**: Latitud de la residencia principal del cliente.
+Este proyecto fue desarrollado en **Python 3.13.0**, utilizando un entorno virtual creado con `venv` para asegurar la reproducibilidad.
 
-* **Longitude**: Longitud de la residencia principal del cliente.
+ **Librerías principales**
 
-* **Gender**: Género del cliente: Masculino, Femenino.
+	•   pandas  → Manejo y análisis de datos en formato tabular (DataFrames). Usada para limpieza, transformación y exploración.
 
-* **Senior Citizen**: Indica si el cliente tiene 65 años o más: Sí, No.
+	•	numpy → Librería de cálculo numérico eficiente. Soporte a arrays y operaciones matemáticas de base.
 
-* **Partner**: Indica si el cliente tiene pareja: Sí, No.
+	•	matplotlib.pyplot → Visualización de datos. Permite crear gráficos básicos como histogramas, boxplots o scatterplots.
 
-* **Dependents**: Indica si el cliente vive con personas a cargo: Sí, No. Los dependientes pueden ser hijos, padres, abuelos, etc.
+	•	seaborn → Librería de visualización estadística construida sobre matplotlib. Facilita gráficos más atractivos y con análisis exploratorios más rápidos.
 
-* **Tenure Months**: Indica el número total de meses que el cliente ha estado con la compañía hasta el final del trimestre mencionado.
+	•	warnings → Usada para ignorar mensajes de advertencia y mantener las salidas limpias.
 
-* **Phone Service**: Indica si el cliente está suscrito al servicio de telefonía fija de la compañía: Sí, No.
+	•	Configuración de pandas (pd.options.display.max_columns = None) → Permite mostrar todas las columnas de un DataFrame sin cortes, facilitando el análisis.
 
-* **Multiple Lines**: Indica si el cliente está suscrito a múltiples líneas telefónicas con la compañía: Sí, No.
+Todas las dependencias se gestionan a través del archivo **`requirements.txt`**, lo que permite instalar el entorno completo con un solo comando:
 
-* **Internet Service**: Indica si el cliente está suscrito al servicio de Internet de la compañía: No, DSL, Fibra Óptica, Cable.
+```bash
+pip install -r requirements.txt
+```
 
-* **Online Security**: Indica si el cliente está suscrito a un servicio adicional de seguridad en línea ofrecido por la compañía: Sí, No.
+---
 
-* **Online Backup**: Indica si el cliente está suscrito a un servicio adicional de respaldo en línea ofrecido por la compañía: Sí, No.
+##  Metodología
 
-* **Device Protection**: Indica si el cliente está suscrito a un plan adicional de protección de dispositivos para su equipo de Internet ofrecido por la compañía: Sí, No.
+1. **Carga de datos** con ruta relativa → garantiza reproducibilidad del proyecto en cualquier entorno.  
+2. **Exploración inicial** con funciones personalizadas (`data_resume`) para revisar tipos, nulos y valores únicos.  
+3. **Limpieza estructurada**:
+   - Normalización de nombres de columnas.  
+   - Eliminación de columnas redundantes (`count`, `country`, `state`, `lat_long`, `churn_label`).  
+   - Tratamiento de nulos (caso especial `churn_reason`).  
+   - Conversión de tipos (`total_charges` a float, varias columnas binarias a 0/1).  
+4. **EDA exhaustivo**:
+   - Distribuciones de variables categóricas y numéricas.  
+   - Boxplots y scatterplots para detectar outliers.  
+   - Relación de variables con `churn_value`.  
+   - Validación de coherencia entre `internet_service` y servicios dependientes (seguridad, backup, streaming).  
+5. **Exportación de datos procesados** → `cleaned_data.csv` en `Data/processed/`.  
 
-* **Tech Support**: Indica si el cliente está suscrito a un plan adicional de soporte técnico con tiempos de espera reducidos ofrecido por la compañía: Sí, No.
+---
 
-* **Streaming TV**: Indica si el cliente usa su servicio de Internet para ver televisión en streaming de 
-un proveedor externo: Sí, No. La compañía no cobra tarifa adicional por este servicio.
+##  Resultados principales Finales del EDA
 
-* **Streaming Movies**: Indica si el cliente usa su servicio de Internet para ver películas en streaming de un proveedor externo: Sí, No. La compañía no cobra tarifa adicional por este servicio.
+- Los principales factores asociados al churn son:
+  - **Tipo de contrato** → los clientes *Month-to-month* presentan mayor fuga.  
+  - **Método de pago** → *Electronic check* concentra el mayor churn.  
+  - **Tipo de internet** → fibra óptica se asocia con más churn que DSL.  
+  - **Características demográficas** → clientes seniors, sin pareja ni dependientes, tienen mayor probabilidad de irse.  
+- Variables como **gender** no muestran impacto relevante.  50% hombres / 50% mujeres
+- **Clientes más nuevos, con facturas más altas y menor valor acumulado son los más propensos a churn.**  
+- Los datos presentan **coherencia interna** (ej: clientes sin internet nunca tienen add-ons).  
 
-* **Contract**: Indica el tipo de contrato actual del cliente: Mes a mes, Un año, Dos años.
+---
 
-* **Paperless Billing**: Indica si el cliente eligió facturación sin papel: Sí, No.
+##  Next Steps
 
-* **Payment Method**: Indica cómo paga el cliente su factura: Domiciliación bancaria, Tarjeta de crédito, Cheque enviado por correo.
+- Añadir un modelo predictivo (clasificación) para predecir la probabilidad de churn (abandono clientes de la compañia).
+- Realizar una segmentación de clientes (clustering) para entender perfiles. Esto debido a que muchos de los clientes que no tienen `internet_service` carecen de casi todos los otros servicios.
+- Crear un dashboard interactivo (ej. con Power BI o Streamlit) para comunicar hallazgos.
+- Optimizar el preprocesamiento con pipelines en src/.
 
-* **Monthly Charge**: Indica el cargo mensual total actual del cliente por todos los servicios de la compañía.
+---
 
-* **Total Charges**: Indica el cargo total del cliente, calculado hasta el final del trimestre mencionado.
+##  Autor
 
-* **Churn Label**: Sí = el cliente dejó la compañía este trimestre. No = el cliente permaneció en la 
-compañía. Relacionado directamente con *Churn Value*.
+Proyecto desarrollado por Fernando Arroyo como práctica de limpieza y exploración de datos en Python. Todo esto no hubiese sido posible sin la supervición, guí y motivación de uno de los grandes prodijios de la Ciencia de datos, Jean Charles.
+	
+    •	 LinkedIn: www.linkedin.com/in/f-arroyo-herrera
 
-* **Churn Value**: 1 = el cliente dejó la compañía este trimestre. 0 = el cliente permaneció en la compañía. Relacionado directamente con *Churn Label*.
-
-* **Churn Score**: Un valor entre 0 y 100 calculado usando la herramienta predictiva IBM SPSS Modeler. El modelo incorpora múltiples factores conocidos por causar cancelaciones. Cuanto más alto el puntaje, mayor la probabilidad de que el cliente se dé de baja.
-
-* **CLTV**: *Customer Lifetime Value* (Valor de vida del cliente). Se calcula un CLTV estimado usando fórmulas corporativas y datos existentes. Cuanto mayor el valor, más valioso es el cliente. Los clientes de alto valor deben ser monitoreados para evitar cancelaciones.
-
-* **Churn Reason**: Razón específica por la cual el cliente dejó la compañía. Relacionado directamente con *Churn Category*.
